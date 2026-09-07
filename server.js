@@ -14,10 +14,9 @@ const { Document, Packer, Paragraph, TextRun, AlignmentType } = require('docx');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Configuração Nativa do OpenAI com injeção global do cabeçalho V2
+// Configuração Nativa do OpenAI (Limpa, confiando no SDK atualizado)
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  defaultHeaders: { "OpenAI-Beta": "assistants=v2" }
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 // Middlewares no server.js
@@ -80,7 +79,7 @@ app.post('/api/processar', upload.single('documento'), async (req, res) => {
       const assistant = await openai.beta.assistants.create({
         name: "Analista PJe",
         instructions: SYSTEM_PROMPT,
-        model: "gpt-4-turbo", // 🚀 Rotação estratégica de motor
+        model: "gpt-4o", // 🧠 Retorno ao modelo de ponta
         temperature: 0.1, 
         tools: [{ type: "file_search" }],
         response_format: { type: "json_object" }
@@ -146,7 +145,7 @@ app.post('/api/processar', upload.single('documento'), async (req, res) => {
       const assistant = await openai.beta.assistants.create({
         name: "Redator Jurídico",
         instructions: "Você é um redator jurídico rigoroso e Advogado Sênior. Leia o PDF inteiro anexado. EXTRAIA TODOS os fatos vitais solicitados no prompt. NUNCA resuma de forma genérica. NUNCA utilize marcações de citação como 【4:11 source】 ou similares. Produza um texto denso, exaustivo e implacável.",
-        model: "gpt-4-turbo", // 🚀 Rotação estratégica de motor
+        model: "gpt-4o", // 🧠 Retorno ao modelo de ponta
         temperature: 0.1, 
         tools: [{ type: "file_search" }]
       });
@@ -255,7 +254,7 @@ app.post('/api/visao-computacional', upload.array('documentos', 10), async (req,
           "alertas": ["String (Alertas sobre indicadores PEXT, pendências, etc)"]
         }
       }`,
-      model: "gpt-4-turbo", // 🚀 Rotação estratégica de motor
+      model: "gpt-4o", // 🧠 Retorno ao modelo de ponta
       temperature: 0.1,
       tools: [{ type: "file_search" }] // Removido o response_format para blindar contas contra bloqueios 404
     });
